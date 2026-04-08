@@ -32,6 +32,15 @@
     nav a { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sand); text-decoration: none; transition: color 0.2s; }
     nav a:hover { color: var(--tan); }
 
+    /* ESTIMATOR SECTION */
+    #estimate { background: var(--dark); padding: 5rem 2rem; }
+    #estimate .section-inner { max-width: 520px; margin: 0 auto; text-align: center; }
+    #estimate .section-label { color: var(--tan); margin-bottom: 0.8rem; }
+    #estimate .section-title { color: var(--cream); margin-bottom: 1rem; }
+    #estimate .section-sub { font-size: 1rem; font-weight: 300; font-style: italic; color: var(--sand); margin-bottom: 2.5rem; line-height: 1.6; }
+    .estimator-frame-wrap { border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(200,169,110,0.2); }
+    .estimator-frame-wrap iframe { display: block; width: 100%; height: 700px; border: none; }
+
     /* HERO */
     .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding-top: 80px; }
     .hero-bg { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(26,22,18,0.5) 0%, rgba(26,22,18,0.25) 40%, rgba(26,22,18,0.8) 100%); z-index: 1; }
@@ -158,6 +167,7 @@
       <a href="#services">Services</a>
       <a href="#gallery">Gallery</a>
       <a href="#reviews">Reviews</a>
+      <a href="#estimate">Free Estimate</a>
       <a href="#contact">Contact</a>
     </nav>
     <a class="topbar-phone" href="tel:3854062408">385-406-2408</a>
@@ -312,6 +322,22 @@
         </div>
       </div>
       <a class="google-link" href="https://www.google.com/search?q=Justin+Mingo%27s+Inc+reviews" target="_blank" rel="noopener">View All 35 Reviews on Google →</a>
+    </div>
+  </section>
+
+  <!-- FREE ESTIMATE -->
+  <section id="estimate">
+    <div class="section-inner">
+      <div class="section-label">Free Estimate</div>
+      <h2 class="section-title">Get an Instant Quote</h2>
+      <p class="section-sub">Answer a few quick questions, upload some photos, and we'll give you a preliminary estimate on the spot — no phone call needed.</p>
+      <div class="estimator-frame-wrap">
+        <iframe
+          src="https://mingosupholstery-estimator.vercel.app"
+          title="Free Upholstery Estimate"
+          loading="lazy"
+        ></iframe>
+      </div>
     </div>
   </section>
 
