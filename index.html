@@ -153,6 +153,77 @@
       section { padding: 4rem 1.2rem; }
       .footer-inner { flex-direction: column; text-align: center; }
     }
+
+    /* PRICING Q&A WIDGET */
+    .pricing-qa-card {
+      background: rgba(200,169,110,0.07);
+      border: 1px solid rgba(200,169,110,0.25);
+      border-radius: 14px;
+      padding: 1.6rem 1.8rem;
+      margin-bottom: 2.5rem;
+      text-align: left;
+    }
+    .pricing-qa-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--tan);
+      margin-bottom: 0.5rem;
+    }
+    .pricing-qa-disclaimer {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 1.1rem;
+      line-height: 1.55;
+      font-style: italic;
+    }
+    .pricing-qa-disclaimer strong { color: var(--sand); font-style: normal; }
+    .pricing-qa-textarea {
+      width: 100%;
+      background: rgba(26,22,18,0.6);
+      border: 1px solid rgba(200,169,110,0.25);
+      border-radius: 8px;
+      color: var(--cream);
+      padding: 0.7rem 0.9rem;
+      font-size: 0.92rem;
+      font-family: 'Source Serif 4', serif;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .pricing-qa-textarea:focus { border-color: rgba(200,169,110,0.6); }
+    .pricing-qa-textarea::placeholder { color: var(--muted); }
+    .pricing-qa-btn {
+      margin-top: 0.8rem;
+      background: var(--tan);
+      color: var(--dark);
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      font-family: 'Source Serif 4', serif;
+    }
+    .pricing-qa-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .pricing-qa-answer {
+      margin-top: 1rem;
+      background: rgba(26,22,18,0.5);
+      border: 1px solid rgba(200,169,110,0.18);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      color: var(--sand);
+      font-size: 0.9rem;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      display: none;
+    }
+    .pricing-qa-answer.visible { display: block; }
   </style>
 </head>
 <body>
@@ -332,6 +403,24 @@
       <h2 class="section-title">Get an Instant Quote</h2>
       <p class="section-sub">Answer a few quick questions, upload some photos, and we'll give you a preliminary estimate on the spot — no phone call needed.</p>
       <p style="font-size:0.85rem; color:rgba(255,255,255,0.5); margin-top:-1.5rem; margin-bottom:2rem;">Or <a href="#contact" style="color:var(--tan); text-decoration:underline;">contact us directly</a> if you prefer.</p>
+
+      <!-- QUICK PRICING Q&A -->
+      <div class="pricing-qa-card">
+        <h3>Quick Pricing Question</h3>
+        <p class="pricing-qa-disclaimer">
+          <strong>Want a more accurate estimate? Upload photos below.</strong> Photos let us see the actual condition, material, and scope of work — so the estimate is much more precise. If you just want a ballpark first, ask away.
+        </p>
+        <textarea
+          id="pricingQInput"
+          class="pricing-qa-textarea"
+          rows="2"
+          placeholder="e.g. How much does it cost to replace a Subaru seat cover?"
+        ></textarea>
+        <br>
+        <button id="pricingQBtn" class="pricing-qa-btn" disabled>⚡ Ask</button>
+        <div id="pricingQAnswer" class="pricing-qa-answer"></div>
+      </div>
+
       <div class="estimator-frame-wrap">
         <iframe
           src="https://mingopro-estimator.vercel.app"
@@ -395,6 +484,52 @@
       <a class="footer-fb" href="https://www.facebook.com" target="_blank" rel="noopener">Facebook ↗</a>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var input = document.getElementById('pricingQInput');
+      var btn   = document.getElementById('pricingQBtn');
+      var answer = document.getElementById('pricingQAnswer');
+
+      input.addEventListener('input', function () {
+        btn.disabled = !input.value.trim();
+      });
+
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!btn.disabled) ask(); }
+      });
+
+      btn.addEventListener('click', ask);
+
+      function ask() {
+        var q = input.value.trim();
+        if (!q || btn.disabled) return;
+        btn.disabled = true;
+        btn.textContent = 'Asking…';
+        answer.className = 'pricing-qa-answer';
+        answer.textContent = '';
+
+        fetch('https://mingopro-estimator.vercel.app/api/ask-pricing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: q })
+        })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+          .then(function (res) {
+            answer.textContent = res.ok ? (res.d.answer || '') : ('⚠️ ' + (res.d.error || 'Something went wrong'));
+            answer.className = 'pricing-qa-answer visible';
+          })
+          .catch(function (err) {
+            answer.textContent = '⚠️ ' + err.message;
+            answer.className = 'pricing-qa-answer visible';
+          })
+          .finally(function () {
+            btn.disabled = false;
+            btn.textContent = '⚡ Ask';
+          });
+      }
+    })();
+  </script>
 
 </body>
 </html>
